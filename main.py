@@ -1,4 +1,3 @@
-# Classe principal do programa
 # Importa a classe Interface
 from interface import Interface
 from bd import BD
@@ -8,9 +7,21 @@ interface = Interface()
 
 opcao = ""
 while opcao != 0:
-    interface.logoTipo()
+    interface.logotipo()
     interface.mostraMenuPrincipal()
     opcao = interface.selecionaOpcao([1, 2, 0])
-    interface.limpaTela()
+    interface.LimpaTela()
 
-    banco = BD("catalogoFilmes.db")
+    # Tela de cadastro de filmes
+    if opcao == 1:
+        interface.mostraCadastroFilmes()
+    opcao == ""
+    interface.LimpaTela()
+
+    # Tela de lista de filmes
+    if opcao == 2:
+        # Mostrar tela par lista de filmes
+        interface.mostraListaFilmes()
+        opcao = ""
+        interface.LimpaTela()
+        

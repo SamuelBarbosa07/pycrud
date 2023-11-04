@@ -1,18 +1,19 @@
 import os
-
+from bd import BD
 # Classe para interface do usuário do programa
+
 class Interface:
     # Construtor
     def __init__(self):
-        pass
+        self.banco = BD("catalogoFilmes.db")
 
-    def logoTipo(self):
+    def logotipo(self):
         print("============================")
         print("=====Catalogo de Filmes=====")
         print("============================")
         print()
 
-    def limpaTela(self):
+    def LimpaTela(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     # Função que permite o usuário escolher uma opção
@@ -47,11 +48,11 @@ class Interface:
         print()
 
     def mostraCadastroFilmes(self):
-        self.logoTipo()
+        self.logotipo()
 
         print("Insira os dados do filme:")
         print("(campos com * são obrigatórios)")
-        print ()
+        print()
 
         titulo = self.solicitaValor('Digite o título*: ', 'texto', False)
         genero = self.solicitaValor('Digite o gênero*: ', 'texto', False)
@@ -62,26 +63,52 @@ class Interface:
         ano = self.solicitaValor('Digite o ano: ', 'numero', True)
 
         # Armazena os valores no banco de dados!
-         
+        valores = {
+            "titulo": titulo,
+            "genero": genero,
+            "duracao": duracao,
+            "diretor": diretor,
+            "estudio": estudio,
+            "classificacao": classificacao,
+            "ano": ano
+        }
+
+        self.banco.inserir('filmes', valores)
+
+    def mostraListaFilmes(self):
+        self.logotipo()
+        print("Veja abaixo a lista de filmes cadastrados.")
+        print()
+
+        filmes = self.banco.buscaDados('filmes')
 
 
-        # Solicita um valor do usuário e valida ele.
-        # return valorDigitado
-        def solicitaValor(self, legenda, tipo = ['texto', 'numero'], permiteNulo = False):
-            valor = input(legenda)
+        for filme in filmes:
+            id, titulo, genero, duracao, diretor, estudio, classificacao, ano = filme
 
-            # Verifica se está vazio
-            if valor == "" and not permiteNulo:
-                print("Valor inválido!")
-                return self.solicitaValor(legenda, tipo, permiteNulo)
-            elif valor == "" and permiteNulo:
-                return valor
-            # Verifica se está  no formato correto
-            if tipo == 'numero': 
-                try:
-                    valor = float(valor)
-                except ValueError:
-                    print("Valor Inválida!")
-                    return self.solicitarValor(legenda, tipo, permiteNulo)
-                
+            print(f"Filme {id} - {titulo} - {genero}")
+        print()
+            
+        input("Aperte enter para continuar...")
+
+    # Solicita um valor do usuário e valida ele.
+    # return valorDigitado
+    def solicitaValor(self, legenda, tipo = 'texto', permiteNulo = False):
+        valor = input(legenda)
+
+        # Verifica se está vazio
+        if valor == "" and not permiteNulo:
+            print("Valor inválido!")
+            return self.solicitaValor(legenda, tipo, permiteNulo)
+        elif valor == "" and permiteNulo:
             return valor
+        
+        # Verifica se está no formato correto
+        if tipo == 'numero':
+            try:
+                valor = float(valor)
+            except ValueError:
+                print("Valor Inválido!")
+                return self.solicitaValor(legenda, tipo, permiteNulo)
+            
+        return valor
